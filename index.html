@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Learning Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Home Page -->
+    <div class="home-page container">
+        <h1><b>Welcome to the Online Learning Platform</b></h1>
+        <div class="button-container">
+            <button id="loginBtn" onclick="showLogin()">Login</button>
+        </div>
+
+        <!-- Login Form (Initially Hidden) -->
+        <div id="login-container" style="display: none;">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button onclick="handleLogin()">Login</button>
+            <button onclick="showRegister()">Create Account</button>
+        </div>
+
+        <!-- Registration Form (Initially Hidden) -->
+        <div id="register-container" style="display: none;">
+            <h2>Register</h2>
+            <input type="text" id="new-username" placeholder="Username" required>
+            <input type="password" id="new-password" placeholder="Password" required>
+            <button onclick="handleRegister()">Register</button>
+            <button onclick="showLogin()">Back to Login</button>
+        </div>
+    </div>
+
+    <!-- Dashboard Page (Initially Hidden) -->
+    <div class="dashboard-page container" style="display:none;">
+        <h1>Your Dashboard</h1>
+        <div class="courses">
+            <!-- Course items will be rendered here dynamically -->
+        </div>
+    </div>
+
+    <script>
+        function showLogin() {
+            // Show login form and hide registration form
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('register-container').style.display = 'none';
+        }
+
+        function showRegister() {
+            // Show registration form and hide login form
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('register-container').style.display = 'block';
+        }
+
+        function handleLogin() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Login successful!');
+            // You might want to store the JWT token here for further requests
+            document.querySelector('.dashboard-page').style.display = 'block';
+            document.querySelector('.home-page').style.display = 'none';
+        } else {
+            alert('Invalid credentials.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function handleRegister() {
+    const newUsername = document.getElementById('new-username').value;
+    const newPassword = document.getElementById('new-password').value;
+
+    fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: newUsername, password: newPassword })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Registration successful!');
+            showLogin(); // Show login form
+        } else {
+            alert(data.message || 'Registration failed.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+    </script>
+</body>
+</html>
